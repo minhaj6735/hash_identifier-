@@ -1,0 +1,45 @@
+import hashlib
+import sys
+
+# Function to calculate file hash
+def calculate_hash(file_path, hash_algorithm):
+    hash_object = hash_algorithm()
+    try:
+        with open(file_path, 'rb') as file:
+            while chunk := file.read(4096):
+                hash_object.update(chunk)
+        return hash_object.hexdigest()
+    except FileNotFoundError:
+        return f"File {file_path} not found."
+    except PermissionError:
+        return f"Permission denied to read {file_path}."
+
+# Main function to handle command-line arguments
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python3 hash_identifier.py <file_path>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+
+    # List of hash algorithms to calculate
+    hash_algorithms = [
+        ('MD5', hashlib.md5),
+        ('SHA-1', hashlib.sha1),
+        ('SHA-224', hashlib.sha224),
+        ('SHA-256', hashlib.sha256),
+        ('SHA-384', hashlib.sha384),
+        ('SHA-512', hashlib.sha512),
+        ('SHA3-256', hashlib.sha3_256),
+        ('SHA3-512', hashlib.sha3_512),
+        ('BLAKE2b', hashlib.blake2b),
+        ('BLAKE2s', hashlib.blake2s)
+    ]
+
+    # Calculate and print the hash for each algorithm
+    for name, algorithm in hash_algorithms:
+        hash_value = calculate_hash(file_path, algorithm)
+        print(f"{name}: {hash_value}")
+
+if __name__ == "__main__":
+    main()
